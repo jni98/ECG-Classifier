@@ -7,3 +7,12 @@ repos:
     - id: ruff-check
     # Run the formatter.
     - id: ruff-format
+
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  # Ruff version.
+  rev: v6.0.0
+  hooks:
+    - id: check-added-large-files
+    - id: check-yaml
+    - id: end-of-file-fixer
+    - id: trailing-whitespace
