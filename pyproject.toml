@@ -1,7 +1,7 @@
 [project]
 name = "ecg"
 version = "0.1.0"
-description = "Add your description here"
+description = "Project to classify ECG data"
 readme = "README.md"
 authors = [
     { name = "Janina Kloos", email = "janina.kloos@fau.de" }
@@ -15,9 +15,6 @@ dependencies = [
     "wfdb>=4.3.1",
 ]
 
-[project.scripts]
-ecg = "ecg:main"
-
 [build-system]
 requires = ["uv_build>=0.12.5,<0.13.0"]
 build-backend = "uv_build"
@@ -29,3 +26,6 @@ dev = [
     "pytest>=8.4.2",
     "ruff>=0.17.0",
 ]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
