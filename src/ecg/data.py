@@ -73,8 +73,8 @@ def load_signals(df: pd.DataFrame, data_dir: str) -> np.ndarray:
     return np.array(signals)
 
 
-def split_by_fold(df) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """Split data into training and testing sets based on stratified folds.
+def split_by_fold(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Split data into training, validation and testing sets based on stratified folds.
 
     Args:
         df (pd.DataFrame): A DataFrame containing the ECG data.
