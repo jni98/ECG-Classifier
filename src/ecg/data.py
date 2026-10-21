@@ -87,4 +87,26 @@ def split_by_fold(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.Data
     test_df = df[df["strat_fold"] == TEST_FOLD]
     val_df = df[df["strat_fold"] == VAL_FOLD]
 
-    return train_df, val_df, test_df
+    return train_df, val_df, test_df  #
+
+
+def load_or_cache(cache: Path, data: pd.DataFrame, data_dir: str) -> np.ndarray:
+    """Load signals from cache if available, otherwise load from data and cache it.
+
+    Args:
+        cache (Path): The path to the cache file.
+        data (pd.DataFrame): A DataFrame containing the ECG data.
+        data_dir (str): The directory containing the WFDB files.
+
+    Returns:
+        np.ndarray: An array of raw ECG signals.
+    """
+
+    if cache.exists():
+        X = np.load(cache)
+    else:
+        X = load_signals(data, data_dir)
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        np.save(cache, X)
+
+    return X
