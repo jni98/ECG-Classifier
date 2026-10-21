@@ -87,7 +87,7 @@ def split_by_fold(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.Data
     test_df = df[df["strat_fold"] == TEST_FOLD]
     val_df = df[df["strat_fold"] == VAL_FOLD]
 
-    return train_df, val_df, test_df  #
+    return train_df, val_df, test_df
 
 
 def load_or_cache(cache: Path, data: pd.DataFrame, data_dir: str) -> np.ndarray:

@@ -2,10 +2,13 @@ import numpy as np
 
 
 def extract_features(X: np.ndarray) -> np.ndarray:
-    """
-    Extract features per ecg channel
-    :param X: The input ECG signals
-    :return: The extracted features
+    """Extract features per ecg channel
+
+    Args:
+        X (np.ndarray): The input ECG signals
+
+    Returns:
+        np.ndarray: The extracted features
     """
     mean = np.mean(X, axis=1)
     std = np.std(X, axis=1)
