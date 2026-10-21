@@ -70,7 +70,7 @@ def load_signals(df: pd.DataFrame, data_dir: str) -> np.ndarray:
     for filename in df["filename_lr"]:
         signal, _ = wfdb.rdsamp(str(Path(data_dir) / filename))
         signals.append(signal)
-    return np.array(signals)
+    return np.array(signals, dtype=np.float32)
 
 
 def split_by_fold(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
