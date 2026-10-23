@@ -4,10 +4,6 @@ Multi-label classification of 12-lead ECG signals with Python. The project
 uses the **PTB-XL 1.0.3** dataset at a sampling rate of 100 Hz and assigns ECG
 records to diagnostic superclasses.
 
-> **Disclaimer:** This project is intended for research and educational
-> purposes only. Its results must not be used for medical diagnosis or
-> clinical decision-making.
-
 ## Features
 
 - Load PTB-XL metadata and diagnostic SCP statements
