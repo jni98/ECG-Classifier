@@ -1,6 +1,11 @@
 import numpy as np
+import pytest
 
-from ecg.evaluate import confusion_counts, metrics_from_counts
+from ecg.evaluate import (
+    confusion_counts,
+    metrics_from_counts,
+    threshold_for_sensitivity,
+)
 
 
 def test_metrics_from_counts():
@@ -30,3 +35,29 @@ def test_confusion_counts():
     assert fp == 0, f"Expected a false positive value of 0 but got {fp} instead"
     assert fn == 1, f"Expected a false negative value of 1 but got {fn} instead"
     assert tp == 2, f"Expected a true positive value of 2 but got {tp} instead"
+
+
+def test_threshold_for_sensitivity():
+    y_score = np.array([0.9, 0.7, 0.4, 0.2, 0.1])
+    y_true = np.array([1, 1, 1, 1, 0])
+
+    threshold = threshold_for_sensitivity(y_true, y_score, min_sensitivity=0.75)
+
+    assert threshold == 0.4, f"Expected a threshold of 0.4 but got {threshold} instead"
+
+
+def test_threshold_for_sensitivity_():
+    y_score = np.array([0.9, 0.7, 0.4, 0.2, 0.1])
+    y_true = np.array([1, 1, 1, 1, 0])
+
+    threshold = threshold_for_sensitivity(y_true, y_score, min_sensitivity=0.2)
+
+    assert threshold == 0.9, f"Expected a threshold of 0.9 but got {threshold} instead"
+
+
+def test_threshold_for_sensitivity_no_positives():
+    y_score = np.array([0.9, 0.7, 0.4])
+    y_true = np.array([0, 0, 0])
+
+    with pytest.raises(ValueError):
+        threshold_for_sensitivity(y_true, y_score)

@@ -1,3 +1,8 @@
+import math
+
+import numpy as np
+
+
 def metrics_from_counts(tn, fp, fn, tp) -> dict:
     """Compute metrics from counts of tn, fp, fn, tp.
 
@@ -44,7 +49,7 @@ def confusion_counts(y_true, y_score, threshold) -> tuple[int, int, int, int]:
         tuple: Confusion counts in the order (tn, fp, fn, tp), as in sklearn.
     """
 
-    y_pred = y_score > threshold
+    y_pred = y_score >= threshold
 
     tn = ((y_pred == 0) & (y_true == 0)).sum()
     fp = ((y_pred == 1) & (y_true == 0)).sum()
@@ -52,3 +57,32 @@ def confusion_counts(y_true, y_score, threshold) -> tuple[int, int, int, int]:
     tp = ((y_pred == 1) & (y_true == 1)).sum()
 
     return tn, fp, fn, tp
+
+
+def threshold_for_sensitivity(y_true, y_score, min_sensitivity=0.9) -> float:
+    """Return the highest threshold that reaches the given sensitivity.
+
+    Args:
+        y_true: Ground truth labels (0/1) for one class.
+        y_score: Predicted probabilities for that class.
+        min_sensitivity: Minimum sensitivity to reach, in (0, 1].
+
+    Returns:
+        float: Highest threshold with sensitivity >= min_sensitivity.
+    """
+    y_true = np.asarray(y_true)
+    y_score = np.asarray(y_score)
+
+    if not 0 < min_sensitivity <= 1:
+        raise ValueError("min_sensitivity must be in (0, 1].")
+
+    # Scores of the positive samples, sorted from high to low
+    positive_scores = np.sort(y_score[y_true == 1])[::-1]
+    if len(positive_scores) == 0:
+        raise ValueError("y_true contains no positive samples.")
+
+    # We need at least k true positives (round up, 13.5 -> 14)
+    k = math.ceil(min_sensitivity * len(positive_scores))
+
+    # With score >= threshold, exactly the k highest positives are detected
+    return float(positive_scores[k - 1])
