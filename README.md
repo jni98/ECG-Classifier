@@ -91,7 +91,10 @@ The same checks run in GitHub Actions for pushes and pull requests.
 │   └── ecg/
 │       ├── data.py          # Data loading, label mapping, fold splitting
 │       └── features.py      # Statistical feature extraction
+│       └── evaluate.py      # Classification evaluation
 ├── tests/
+├── reports/
+│   └── figures/
 ├── pyproject.toml
 └── uv.lock
 ```
