@@ -1,6 +1,10 @@
 import math
+from collections.abc import Sequence
 
 import numpy as np
+from matplotlib import pyplot as plt
+from matplotlib.figure import Figure
+from sklearn.metrics import PrecisionRecallDisplay, RocCurveDisplay
 
 
 def metrics_from_counts(tn, fp, fn, tp) -> dict:
@@ -86,3 +90,33 @@ def threshold_for_sensitivity(y_true, y_score, min_sensitivity=0.9) -> float:
 
     # With score >= threshold, exactly the k highest positives are detected
     return float(positive_scores[k - 1])
+
+
+def plot_roc_pr_curve(
+    y_true_all: np.ndarray, y_score_all: np.ndarray, class_names: Sequence[str]
+) -> Figure:
+    """
+    Generates a figure with two subplots for the PR- and ROC-Curve
+    Args:
+        y_true_all: Ground truth labels (0/1) for all classes
+        y_score_all: Predicted probabilities for all classes
+        class_names: Class names for all given classes
+
+    Returns:
+        fig: One figure including subplots for PR- and ROC-Curve
+    """
+
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+    for i, name in enumerate(class_names):
+        PrecisionRecallDisplay.from_predictions(
+            y_true_all[:, i], y_score_all[:, i], name=name, ax=axes[0]
+        )
+        RocCurveDisplay.from_predictions(
+            y_true_all[:, i], y_score_all[:, i], name=name, ax=axes[1]
+        )
+
+        axes[0].set_title("Precision-Recall Curve")
+        axes[0].set_title("Receiver Operating Characteristic Curve")
+
+    return fig

@@ -113,6 +113,26 @@ logistic regression with class weighting. The following AUROC scores were
 | `STTC` | 0.710 |
 | **Macro average** | **0.783** |
 
+
+### ROC and precision-recall curves
+
+![ROC and precision-recall curves per class on validation fold 9](reports/figures/roc_pr_curves.png)
+
+ROC curves ignore how common a class is, while precision-recall (PR) curves do
+not: a random classifier lies on the diagonal in ROC space, but on a horizontal
+line at the class prevalence in PR space. That is also where each PR curve
+ends at recall 1.0. Prevalences on fold 9: NORM 44.5 %, MI 25.2 %, STTC 24.6 %,
+CD 23.1 %, HYP 12.5 %.
+
+| Class | AUROC | AP | Why the PR curve looks different |
+| --- | ---: | ---: | --- |
+| `CD` | 0.82 | 0.63 | Good ranking plus a medium prevalence gives the second-best AP; precision stays around 0.8 up to a recall of about 0.4 and then drops quickly. |
+| `HYP` | 0.85 | 0.48 | Highest AUROC but a low AP: with only 12.5 % HYP cases, even a small false-positive rate creates many false alarms compared to the few true cases. |
+| `MI` | 0.76 | 0.49 | Similar prevalence to STTC, so the higher AP reflects the better ranking (higher AUROC), not the class balance. |
+| `NORM` | 0.78 | 0.69 | Only mid-field in AUROC but the best AP, because almost half of the ECGs are NORM and false alarms weigh less against many true positives. |
+| `STTC` | 0.71 | 0.44 | Lowest AUROC and lowest AP; at similar prevalence to MI and CD, the weaker ranking shows directly in the PR curve. |
+
+
 ## Data source
 
 Wagner, P., Strodthoff, N., Bousseljot, R., Samek, W. & Schaeffter, T.
