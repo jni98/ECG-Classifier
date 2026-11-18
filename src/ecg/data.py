@@ -27,7 +27,7 @@ def get_superclasses(codes: dict, statements: pd.DataFrame) -> list[str]:
     return sorted(set(superclasses))
 
 
-def load_metadata(path: str) -> pd.DataFrame:
+def load_metadata(path: str | Path) -> pd.DataFrame:
     """Load metadata from CSV file and replace age 300 with 90.
 
     Args:
@@ -42,7 +42,7 @@ def load_metadata(path: str) -> pd.DataFrame:
     return df
 
 
-def load_statements(path: str) -> pd.DataFrame:
+def load_statements(path: str | Path) -> pd.DataFrame:
     """Load diagnostic statements from CSV file.
 
     Args:
@@ -56,7 +56,7 @@ def load_statements(path: str) -> pd.DataFrame:
     return statements
 
 
-def load_signals(df: pd.DataFrame, data_dir: str) -> np.ndarray:
+def load_signals(df: pd.DataFrame, data_dir: str | Path) -> np.ndarray:
     """Load raw ECG signals from WFDB files.
 
     Args:
@@ -90,7 +90,7 @@ def split_by_fold(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.Data
     return train_df, val_df, test_df
 
 
-def load_or_cache(cache: Path, data: pd.DataFrame, data_dir: str) -> np.ndarray:
+def load_or_cache(cache: Path, data: pd.DataFrame, data_dir: str | Path) -> np.ndarray:
     """Load signals from cache if available, otherwise load from data and cache it.
 
     Args:

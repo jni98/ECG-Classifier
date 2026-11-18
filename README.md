@@ -68,6 +68,21 @@ When running `02_baseline.ipynb`, the loaded signals are cached as
 `data/processed/X_train.npy`, `data/processed/X_val.npy`, and
 `data/processed/X_test.npy`.
 
+## Evaluate the baseline
+
+To train the baseline and evaluate it on validation fold 9 without a notebook,
+run from the project root:
+
+```bash
+uv run python scripts/evaluate_baseline.py
+```
+
+The script trains the logistic-regression baseline on folds 1-8 and prints the
+macro AUROC, the AUROC per class, and for each class the threshold that reaches
+a sensitivity of at least 90 % together with the resulting specificity and
+precision. It also saves the ROC and precision-recall curves to
+`reports/figures/roc_pr_curves.png`. Test fold 10 is not used.
+
 ## Tests and code quality
 
 ```bash
@@ -86,12 +101,13 @@ The same checks run in GitHub Actions for pushes and pull requests.
 │   ├── 01_eda.ipynb
 │   └── 02_baseline.ipynb
 ├── scripts/
-│   └── download_data.py
+│   ├── download_data.py
+│   └── evaluate_baseline.py  # Baseline evaluation on fold 9
 ├── src/
 │   └── ecg/
 │       ├── data.py          # Data loading, label mapping, fold splitting
+│       ├── evaluate.py      # Metrics, threshold selection, ROC/PR plots
 │       └── features.py      # Statistical feature extraction
-│       └── evaluate.py      # Classification evaluation
 ├── tests/
 ├── reports/
 │   └── figures/
