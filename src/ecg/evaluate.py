@@ -117,6 +117,6 @@ def plot_roc_pr_curve(
         )
 
         axes[0].set_title("Precision-Recall Curve")
-        axes[0].set_title("Receiver Operating Characteristic Curve")
+        axes[1].set_title("Receiver Operating Characteristic Curve")
 
     return fig
