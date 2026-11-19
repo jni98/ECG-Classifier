@@ -152,6 +152,30 @@ CD 23.1 %, HYP 12.5 %.
 | `STTC` | 0.71 | 0.44 | Lowest AUROC and lowest AP; at similar prevalence to MI and CD, the weaker ranking shows directly in the PR curve. |
 
 
+### Calibration
+
+![Reliability diagram per class on validation fold 9](reports/figures/reliability_diagram.png)
+
+The model is **overconfident** for every class: all curves lie below the
+diagonal, so the predicted probabilities are higher than the observed share of
+positive ECGs. For example, when the model predicts about 0.7 for `HYP`, only
+about 36 % of those ECGs actually show `HYP`. The main reason is
+`class_weight="balanced"`, which trains each classifier as if both labels were
+equally common.
+
+For a clinician this means the scores can be used to rank ECGs and to apply the
+tuned thresholds, but they must not be read as the patient's actual risk. The
+Brier scores confirm this: for `HYP`, `MI` and `STTC` they are worse than
+always predicting the class prevalence (Brier = p · (1 − p)).
+
+| Class | Brier score | Constant prevalence |
+| --- | ---: | ---: |
+| `CD` | 0.167 | 0.178 |
+| `HYP` | 0.145 | 0.109 |
+| `MI` | 0.198 | 0.189 |
+| `NORM` | 0.195 | 0.247 |
+| `STTC` | 0.215 | 0.185 |
+
 ## Data source
 
 Wagner, P., Strodthoff, N., Bousseljot, R., Samek, W. & Schaeffter, T.

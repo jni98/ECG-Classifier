@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import brier_score_loss, roc_auc_score
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import MultiLabelBinarizer, StandardScaler
@@ -18,6 +18,7 @@ from ecg.data import (
 from ecg.evaluate import (
     confusion_counts,
     metrics_from_counts,
+    plot_reliability_diagram,
     plot_roc_pr_curve,
     threshold_for_sensitivity,
 )
@@ -100,21 +101,29 @@ def evaluate_baseline(
     # Thresholds are chosen on fold 9 only, never on the test fold
     thresholds = np.zeros(len(mlb.classes_))
     metrics = []
+    brier_score = []
     for i in range(len(mlb.classes_)):
         thresholds[i] = threshold_for_sensitivity(
             y_val[:, i], y_score[:, i], min_sensitivity=0.9
         )
         tn, fp, fn, tp = confusion_counts(y_val[:, i], y_score[:, i], thresholds[i])
         metrics.append(metrics_from_counts(tn, fp, fn, tp))
+        brier_score.append(brier_score_loss(y_val[:, i], y_score[:, i]))
 
     metrics_df = pd.DataFrame(metrics, index=mlb.classes_)
     metrics_df["thresholds"] = thresholds
+    metrics_df["brier score"] = brier_score
     print(f"Metrics for a given threshold: \n{metrics_df.round(3)}")
 
     fig = plot_roc_pr_curve(y_val, y_score, mlb.classes_)
     fig_path = report_dir / "roc_pr_curves.png"
     fig.savefig(fig_path, dpi=150, bbox_inches="tight")
     print(f"ROC and PR curves were saved to {fig_path}")
+
+    fig = plot_reliability_diagram(y_val, y_score, mlb.classes_)
+    fig_path = report_dir / "reliability_diagram.png"
+    fig.savefig(fig_path, dpi=150, bbox_inches="tight")
+    print(f"Reliability diagram was saved to {fig_path}")
 
 
 if __name__ == "__main__":

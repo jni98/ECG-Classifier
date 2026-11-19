@@ -4,6 +4,7 @@ from collections.abc import Sequence
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
+from sklearn.calibration import CalibrationDisplay
 from sklearn.metrics import PrecisionRecallDisplay, RocCurveDisplay
 
 
@@ -116,7 +117,35 @@ def plot_roc_pr_curve(
             y_true_all[:, i], y_score_all[:, i], name=name, ax=axes[1]
         )
 
-        axes[0].set_title("Precision-Recall Curve")
-        axes[1].set_title("Receiver Operating Characteristic Curve")
+    axes[0].set_title("Precision-Recall Curve")
+    axes[1].set_title("Receiver Operating Characteristic Curve")
 
+    return fig
+
+
+def plot_reliability_diagram(
+    y_true_all: np.ndarray, y_score_all: np.ndarray, class_names: Sequence[str]
+) -> Figure:
+    """
+    Generates a figure showing the reliability diagram of all classes and the
+    perfectly calibrated line.
+
+    Args:
+        y_true_all: Ground truth labels (0/1) for all classes
+        y_score_all: Predicted probabilities for all classes
+        class_names: Class names for all given classes
+
+    Return:
+        fig: One figure for all classes
+
+    """
+
+    fig, axes = plt.subplots(1, 1, figsize=(6, 5))
+
+    for i, name in enumerate(class_names):
+        CalibrationDisplay.from_predictions(
+            y_true_all[:, i], y_score_all[:, i], name=name, ax=axes
+        )
+
+    axes.set_title("Reliability Diagram")
     return fig
