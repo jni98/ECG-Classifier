@@ -1,5 +1,7 @@
 # ECG Classifier
 
+[![CI](https://github.com/jni98/ECG-Classifier/actions/workflows/ci.yml/badge.svg)](https://github.com/jni98/ECG-Classifier/actions/workflows/ci.yml)
+
 Multi-label classification of 12-lead ECG signals with Python. The project
 uses the **PTB-XL 1.0.3** dataset at a sampling rate of 100 Hz and assigns ECG
 records to diagnostic superclasses.
