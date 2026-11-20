@@ -178,6 +178,38 @@ always predicting the class prevalence (Brier = p · (1 − p)).
 | `NORM` | 0.195 | 0.247 |
 | `STTC` | 0.215 | 0.185 |
 
+### Error analysis: missed MI cases
+
+At the threshold for 90 % sensitivity the baseline misses 54 of the 540 MI ECGs
+on validation fold 9. Comparing these false negatives (FN) with the detected MI
+ECGs (TP) points to three patterns (analysis in
+`notebooks/03_error_analysis.ipynb`):
+
+1. **Baseline drift.** 24 % of the missed MI ECGs have baseline drift, compared
+   with 10 % of the detected ones. The baseline features are per-lead
+   statistics such as mean and standard deviation, and a wandering baseline
+   distorts exactly these values.
+2. **Anterior and lateral infarcts.** Among the MI subclasses of missed ECGs,
+   59 % are anterior (`AMI`) and 10 % lateral (`LMI`), versus 46 % and 2 % among
+   detected ECGs. Inferior infarcts (`IMI`) make up 52 % of the detected but
+   only 29 % of the missed cases. Per-lead summary features cannot capture the
+   localised ST and Q-wave changes that define an infarct's location.
+3. **Uncertain labels and masking conditions.** Of the 20 missed ECGs with the
+   lowest MI score, 10 carry their MI code with a likelihood of only 15 or 50
+   (out of 100), so part of the "errors" may be label noise. Five of them also
+   show left ventricular hypertrophy (`LVH`), which alters the ST segment and
+   can mask infarct signs.
+
+Static noise and electrode problems are equally common in both groups. Missed
+patients are about five years younger on average (64.7 vs. 70.2 years).
+
+![Three missed MI ECGs: baseline drift, MI with LVH, uncertain label](reports/figures/missed_mi_examples.png)
+
+With only 54 missed ECGs these are hypotheses, not proof. They suggest three
+experiments for the CNN: a high-pass filter against baseline drift, a model
+that learns lead-specific patterns from the raw signal, and an evaluation
+restricted to MI labels with likelihood 100.
+
 ## Data source
 
 Wagner, P., Strodthoff, N., Bousseljot, R., Samek, W. & Schaeffter, T.
