@@ -1,7 +1,13 @@
 import pandas as pd
 import pytest
 
-from ecg.data import TEST_FOLD, VAL_FOLD, get_superclasses, split_by_fold
+from ecg.data import (
+    TEST_FOLD,
+    VAL_FOLD,
+    add_label_columns,
+    get_superclasses,
+    split_by_fold,
+)
 
 
 @pytest.fixture
@@ -84,3 +90,26 @@ def test_split_by_fold_combined(folds_df):
     assert all_samples == set(folds_df.index), (
         "Not all samples are accounted for in the splits"
     )
+
+
+def test_add_label_columns_keeps_index():
+    # Gaps in the index like in the filtered train_df
+    index = [5, 17, 42]
+    superclasses = [["NORM"], ["NORM", "STTC"], ["CD", "HYP", "MI", "STTC"]]
+    df = pd.DataFrame({"superclasses": superclasses}, index=index)
+
+    expected = pd.DataFrame(
+        {
+            "superclasses": superclasses,
+            "CD": [0, 0, 1],
+            "HYP": [0, 0, 1],
+            "MI": [0, 0, 1],
+            "NORM": [1, 1, 0],
+            "STTC": [0, 1, 1],
+        },
+        index=index,
+    )
+
+    result = add_label_columns(df)
+
+    pd.testing.assert_frame_equal(result, expected, check_dtype=False)

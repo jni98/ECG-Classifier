@@ -8,7 +8,7 @@ import torch
 import wfdb
 from torch.utils.data import Dataset
 
-LABELS = ["CD", "HYP", "MI", "NORM", "STTC"]
+from ecg.data import LABELS
 
 
 class PTBXLDataset(Dataset):

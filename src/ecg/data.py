@@ -4,9 +4,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import wfdb
+from sklearn.preprocessing import MultiLabelBinarizer
 
 VAL_FOLD = 9
 TEST_FOLD = 10
+LABELS = ["CD", "HYP", "MI", "NORM", "STTC"]
 
 
 def get_superclasses(codes: dict, statements: pd.DataFrame) -> list[str]:
@@ -110,3 +112,20 @@ def load_or_cache(cache: Path, data: pd.DataFrame, data_dir: str | Path) -> np.n
         np.save(cache, X)
 
     return X
+
+
+def add_label_columns(df: pd.DataFrame, classes: list[str] = LABELS) -> pd.DataFrame:
+    """Add one 0/1 column per class from the superclasses lists (multi-hot).
+
+    Args:
+        df (pd.DataFrame): DataFrame with a superclasses column of lists.
+        classes (list[str]): Class names, in the column order to create.
+
+    Returns:
+        pd.DataFrame: A copy of df with one extra column per class.
+    """
+    label_df = df.copy()
+    mlb = MultiLabelBinarizer(classes=classes)
+    encoded = mlb.fit_transform(label_df["superclasses"])
+    new_columns = pd.DataFrame(encoded, columns=classes, index=label_df.index)
+    return pd.concat([label_df, new_columns], axis=1)
